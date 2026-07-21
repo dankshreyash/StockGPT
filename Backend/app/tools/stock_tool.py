@@ -69,6 +69,7 @@ def resolve_ticker(query: str) -> str:
     return quotes[0].get('symbol')
 
 import requests
+from yahooquery import Ticker as YQTicker
 
 def get_stock(query: str) -> Dict[str, Any]:
     ticker = resolve_ticker(query)
@@ -91,11 +92,36 @@ def get_stock(query: str) -> Dict[str, Any]:
         if not current_price:
             hist = stock.history(period="5d")
             if not hist.empty:
-                current_price = hist['Close'].iloc[-1]
+                current_price = float(hist['Close'].iloc[-1])
                 if len(hist) > 1:
-                    previous_close = hist['Close'].iloc[-2]
+                    previous_close = float(hist['Close'].iloc[-2])
                 else:
                     previous_close = current_price
+                    
+        # If yfinance completely failed, fallback to yahooquery
+        if not current_price:
+            yq_ticker = YQTicker(ticker)
+            price_data = yq_ticker.price.get(ticker, {})
+            summary_data = yq_ticker.summary_detail.get(ticker, {})
+            profile_data = yq_ticker.asset_profile.get(ticker, {})
+            
+            if isinstance(price_data, dict) and price_data.get('regularMarketPrice'):
+                current_price = price_data.get('regularMarketPrice')
+                previous_close = price_data.get('regularMarketPreviousClose') or current_price
+                
+                info = {
+                    'currency': price_data.get('currency', 'USD'),
+                    'marketCap': price_data.get('marketCap') or summary_data.get('marketCap'),
+                    'longName': price_data.get('longName'),
+                    'shortName': price_data.get('shortName'),
+                    'trailingPE': summary_data.get('trailingPE') or summary_data.get('forwardPE'),
+                    'fiftyTwoWeekHigh': summary_data.get('fiftyTwoWeekHigh'),
+                    'fiftyTwoWeekLow': summary_data.get('fiftyTwoWeekLow'),
+                    'sector': profile_data.get('sector'),
+                    'industry': profile_data.get('industry'),
+                    'website': profile_data.get('website'),
+                    'longBusinessSummary': profile_data.get('longBusinessSummary')
+                }
                     
         if not current_price:
             return None
@@ -105,15 +131,15 @@ def get_stock(query: str) -> Dict[str, Any]:
         change_percent = (change / previous_close) * 100 if previous_close else 0
         
         currency = info.get('currency', 'INR' if ticker.endswith('.NS') or ticker.endswith('.BO') else 'USD')
-        market_cap = info.get('marketCap')
+        market_cap = info.get('marketCap') or info.get('market_cap')
         
         return {
             "type": "stock",
             "company": info.get('longName') or info.get('shortName') or ticker,
             "symbol": ticker,
-            "price": current_price,
-            "change": change,
-            "change_percent": change_percent,
+            "price": float(current_price),
+            "change": float(change),
+            "change_percent": float(change_percent),
             "currency": currency,
             "market_cap": market_cap,
             "market_cap_display": format_market_cap(market_cap, currency),
