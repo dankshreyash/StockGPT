@@ -13,7 +13,7 @@ const TypingIndicator = () => {
   };
 
   return (
-    <div className="flex items-center gap-3 p-4 self-start bg-zinc-900 rounded-2xl rounded-tl-sm w-fit border border-white/5">
+    <div className="flex items-center gap-3 p-4 self-start bg-white dark:bg-zinc-900 rounded-2xl rounded-tl-sm w-fit border border-black/5 dark:border-white/5">
       <motion.div
         variants={containerVariants}
         initial="start"
@@ -34,7 +34,7 @@ const TypingIndicator = () => {
           />
         ))}
       </motion.div>
-      <span className="text-xs text-zinc-400 font-medium">Searching stock...</span>
+      <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Searching stock...</span>
     </div>
   );
 };

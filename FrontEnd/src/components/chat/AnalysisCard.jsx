@@ -19,12 +19,12 @@ const AnalysisCard = ({ data }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 my-2 max-w-sm w-full"
+      className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-4 my-2 max-w-sm w-full"
     >
-      <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+      <div className="flex items-center justify-between mb-4 border-b border-black/10 dark:border-white/10 pb-3">
         <div className="flex items-center gap-2">
           <FiCpu className="text-blue-400" />
-          <h3 className="text-sm font-bold text-white tracking-tight">AI Investment Score</h3>
+          <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-tight">AI Investment Score</h3>
         </div>
       </div>
 
@@ -43,7 +43,7 @@ const AnalysisCard = ({ data }) => {
       {data.summary && (
         <div className="mb-4">
           <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Summary</h4>
-          <p className="text-sm text-zinc-300 leading-relaxed bg-zinc-950/50 p-3 rounded-xl border border-white/5">
+          <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed bg-gray-50 dark:bg-zinc-950/50 p-3 rounded-xl border border-black/5 dark:border-white/5">
             {data.summary}
           </p>
         </div>
@@ -54,7 +54,7 @@ const AnalysisCard = ({ data }) => {
           <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Key Strengths</h4>
           <ul className="space-y-1.5">
             {data.strengths.map((str, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
+              <li key={i} className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300">
                 <FiCheckCircle className="text-green-400 mt-0.5 shrink-0" />
                 <span className="leading-snug">{str}</span>
               </li>
@@ -68,7 +68,7 @@ const AnalysisCard = ({ data }) => {
           <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Key Weaknesses</h4>
           <ul className="space-y-1.5">
             {data.weaknesses.map((wk, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
+              <li key={i} className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300">
                 <FiAlertTriangle className="text-yellow-400 mt-0.5 shrink-0" />
                 <span className="leading-snug">{wk}</span>
               </li>
@@ -83,7 +83,7 @@ const AnalysisCard = ({ data }) => {
           <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Risk Factors</h4>
           <ul className="space-y-1.5">
             {data.risks.map((risk, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
+              <li key={i} className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300">
                 <FiAlertTriangle className="text-yellow-400 mt-0.5 shrink-0" />
                 <span className="leading-snug">{risk}</span>
               </li>

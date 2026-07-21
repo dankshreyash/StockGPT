@@ -35,12 +35,12 @@ const ExportMenu = ({ targetRefId, data }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 mt-4 pt-3 border-t border-white/5 opacity-50 hover:opacity-100 transition-opacity">
+    <div className="flex items-center gap-2 mt-4 pt-3 border-t border-black/5 dark:border-white/5 opacity-50 hover:opacity-100 transition-opacity">
       <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider mr-2">Export</span>
-      <button onClick={handleExportPDF} title="Download PDF" className="p-1.5 text-zinc-400 hover:text-white bg-zinc-900 rounded-md border border-zinc-800 hover:border-zinc-600 transition-all">
+      <button onClick={handleExportPDF} title="Download PDF" className="p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-white bg-white dark:bg-zinc-900 rounded-md border border-gray-200 dark:border-zinc-800 hover:border-zinc-600 transition-all">
         <FiFileText size={12} />
       </button>
-      <button onClick={handleCopy} title="Copy Summary" className="p-1.5 text-zinc-400 hover:text-white bg-zinc-900 rounded-md border border-zinc-800 hover:border-zinc-600 transition-all">
+      <button onClick={handleCopy} title="Copy Summary" className="p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-white bg-white dark:bg-zinc-900 rounded-md border border-gray-200 dark:border-zinc-800 hover:border-zinc-600 transition-all">
         <FiCopy size={12} />
       </button>
     </div>

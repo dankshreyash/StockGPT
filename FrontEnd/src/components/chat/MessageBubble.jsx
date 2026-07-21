@@ -27,11 +27,11 @@ const MessageBubble = ({ message }) => {
         className={`max-w-[85%] rounded-2xl px-4 py-3 ${
           isUser
             ? 'bg-green-600 text-white rounded-tr-sm'
-            : 'bg-zinc-800 text-zinc-100 rounded-tl-sm border border-zinc-700/50 shadow-sm'
+            : 'bg-gray-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-tl-sm border border-gray-300 dark:border-zinc-700/50 shadow-sm'
         }`}
       >
         {message.text && (
-          <div className="prose prose-invert max-w-none text-sm prose-p:leading-relaxed prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-zinc-800">
+          <div className="prose dark:prose-invert max-w-none text-sm prose-p:leading-relaxed prose-pre:bg-gray-100 dark:prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-zinc-800">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {message.text}
             </ReactMarkdown>

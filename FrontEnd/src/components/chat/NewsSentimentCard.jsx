@@ -25,12 +25,12 @@ const NewsSentimentCard = ({ data }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 my-2 max-w-sm w-full"
+      className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-4 my-2 max-w-sm w-full"
     >
-      <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+      <div className="flex items-center justify-between mb-4 border-b border-black/10 dark:border-white/10 pb-3">
         <div className="flex items-center gap-2">
           <FiGlobe className="text-blue-400" />
-          <h3 className="text-sm font-bold text-white tracking-tight">News Sentiment</h3>
+          <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-tight">News Sentiment</h3>
         </div>
         <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider ${getSentimentColor(data.overall_sentiment)}`}>
           {data.overall_sentiment}
@@ -45,7 +45,7 @@ const NewsSentimentCard = ({ data }) => {
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-3 rounded-xl bg-zinc-950/50 border border-white/5 hover:border-zinc-700 transition-colors group"
+            className="block p-3 rounded-xl bg-gray-50 dark:bg-zinc-950/50 border border-black/5 dark:border-white/5 hover:border-gray-300 dark:border-zinc-700 transition-colors group"
           >
             <div className="flex justify-between items-start mb-2">
               <span className="text-[10px] text-zinc-500 font-medium tracking-wide">
@@ -56,7 +56,7 @@ const NewsSentimentCard = ({ data }) => {
                 {item.sentiment} ({item.confidence})
               </div>
             </div>
-            <h4 className="text-xs font-semibold text-zinc-200 leading-snug mb-1.5 group-hover:text-blue-400 transition-colors line-clamp-2">
+            <h4 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 leading-snug mb-1.5 group-hover:text-blue-400 transition-colors line-clamp-2">
               {item.title}
             </h4>
             <div className="flex justify-between items-center mt-2">

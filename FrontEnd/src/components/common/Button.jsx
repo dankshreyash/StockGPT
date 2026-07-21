@@ -10,9 +10,9 @@ export function cn(...inputs) {
 const Button = React.forwardRef(({ className, variant = 'primary', size = 'default', children, ...props }, ref) => {
   const variants = {
     primary: 'bg-green-accent hover:bg-green-600 text-white shadow-lg shadow-green-accent/20',
-    secondary: 'bg-zinc-800 hover:bg-zinc-700 text-white',
-    ghost: 'hover:bg-zinc-800/50 text-zinc-300 hover:text-white',
-    icon: 'p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-white'
+    secondary: 'bg-gray-100 dark:bg-zinc-800 hover:bg-zinc-700 text-zinc-900 dark:text-white',
+    ghost: 'hover:bg-gray-100 dark:bg-zinc-800/50 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:text-white',
+    icon: 'p-2 rounded-full hover:bg-gray-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-white'
   };
 
   const sizes = {

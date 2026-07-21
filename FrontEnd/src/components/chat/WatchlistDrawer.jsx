@@ -48,28 +48,28 @@ const WatchlistDrawer = ({ isOpen, onClose, onSelect }) => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-full w-72 bg-zinc-900 border-l border-zinc-800 z-50 flex flex-col shadow-2xl"
+            className="fixed top-0 right-0 h-full w-72 bg-white dark:bg-zinc-900 border-l border-gray-200 dark:border-zinc-800 z-50 flex flex-col shadow-2xl"
           >
-            <div className="flex items-center justify-between p-4 border-b border-white/5">
+            <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5">
               <div className="flex items-center gap-2">
                 <FiBookmark className="text-blue-400" />
-                <h2 className="font-bold text-white tracking-tight">Watchlist</h2>
+                <h2 className="font-bold text-zinc-900 dark:text-white tracking-tight">Watchlist</h2>
               </div>
-              <button onClick={onClose} className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-white/5 transition-colors">
+              <button onClick={onClose} className="p-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-white rounded-full hover:bg-white/5 transition-colors">
                 <FiX size={18} />
               </button>
             </div>
 
-            <div className="p-4 border-b border-white/5">
+            <div className="p-4 border-b border-black/5 dark:border-white/5">
               <form onSubmit={handleAdd} className="flex gap-2">
                 <input
                   type="text"
                   value={newTicker}
                   onChange={(e) => setNewTicker(e.target.value)}
                   placeholder="Add symbol..."
-                  className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500/50 uppercase placeholder:normal-case placeholder:text-zinc-600"
+                  className="flex-1 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-blue-500/50 uppercase placeholder:normal-case placeholder:text-zinc-600"
                 />
-                <button type="submit" className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                <button type="submit" className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-zinc-900 dark:text-white rounded-lg text-sm font-medium transition-colors">
                   Add
                 </button>
               </form>
@@ -82,8 +82,8 @@ const WatchlistDrawer = ({ isOpen, onClose, onSelect }) => {
                 </div>
               ) : (
                 watchlist.map(ticker => (
-                  <div key={ticker} className="flex items-center justify-between bg-zinc-950 border border-white/5 p-3 rounded-xl group hover:border-zinc-700 transition-colors cursor-pointer" onClick={() => { onSelect(ticker); onClose(); }}>
-                    <span className="font-bold text-zinc-200">{ticker}</span>
+                  <div key={ticker} className="flex items-center justify-between bg-gray-50 dark:bg-zinc-950 border border-black/5 dark:border-white/5 p-3 rounded-xl group hover:border-gray-300 dark:border-zinc-700 transition-colors cursor-pointer" onClick={() => { onSelect(ticker); onClose(); }}>
+                    <span className="font-bold text-zinc-800 dark:text-zinc-200">{ticker}</span>
                     <button onClick={(e) => { e.stopPropagation(); handleRemove(ticker); }} className="p-1.5 text-zinc-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all rounded hover:bg-white/5">
                       <FiTrash2 size={14} />
                     </button>

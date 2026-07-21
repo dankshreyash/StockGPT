@@ -15,7 +15,7 @@ const ChatContainer = ({ messages, isTyping }) => {
   }, [messages, isTyping]);
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar bg-zinc-950/50">
+    <div className="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar bg-gray-50 dark:bg-zinc-950/50">
       <AnimatePresence>
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />

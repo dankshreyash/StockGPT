@@ -36,23 +36,23 @@ const ChartCard = ({ data }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 my-2 max-w-sm w-full overflow-hidden"
+      className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-4 my-2 max-w-sm w-full overflow-hidden"
     >
-      <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+      <div className="flex items-center justify-between mb-4 border-b border-black/10 dark:border-white/10 pb-3">
         <div className="flex items-center gap-2">
           <FiActivity className="text-blue-400" />
-          <h3 className="text-sm font-bold text-white tracking-tight">Price Chart</h3>
+          <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-tight">Price Chart</h3>
         </div>
         
-        <div className="flex gap-1 bg-zinc-950 p-1 rounded-lg border border-white/5">
+        <div className="flex gap-1 bg-gray-50 dark:bg-zinc-950 p-1 rounded-lg border border-black/5 dark:border-white/5">
           {['1D', '5D', '1M', '6M', '1Y'].map(tf => (
             <button
               key={tf}
               onClick={() => setTimeframe(tf)}
               className={`text-[10px] px-2 py-1 rounded-md transition-colors ${
                 timeframe === tf 
-                  ? 'bg-zinc-800 text-white font-semibold' 
-                  : 'text-zinc-500 hover:text-zinc-300'
+                  ? 'bg-gray-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-semibold' 
+                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300'
               }`}
             >
               {tf}

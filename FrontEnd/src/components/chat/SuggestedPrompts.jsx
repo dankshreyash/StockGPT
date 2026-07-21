@@ -21,7 +21,7 @@ const SuggestedPrompts = ({ onSelect }) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => onSelect(prompt)}
-          className="text-xs bg-zinc-800/80 hover:bg-zinc-700 border border-zinc-700/50 text-zinc-300 py-2 px-3 rounded-full transition-colors whitespace-nowrap shadow-sm backdrop-blur-sm"
+          className="text-xs bg-gray-100 dark:bg-zinc-800/80 hover:bg-gray-200 dark:hover:bg-zinc-700 border border-gray-300 dark:border-zinc-700/50 text-zinc-700 dark:text-zinc-300 py-2 px-3 rounded-full transition-colors whitespace-nowrap shadow-sm backdrop-blur-sm"
         >
           {prompt}
         </motion.button>

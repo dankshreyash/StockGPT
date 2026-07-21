@@ -25,23 +25,23 @@ const NewsList = ({ data }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.1 }}
-          className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 hover:bg-zinc-800/80 transition-colors group block relative overflow-hidden"
+          className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-3 hover:bg-gray-100 dark:bg-zinc-800/80 transition-colors group block relative overflow-hidden"
         >
           <div className="flex justify-between items-start gap-2 mb-2">
-            <h4 className="text-sm font-semibold text-zinc-200 line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors">
+            <h4 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors">
               {item.title}
             </h4>
             <FiExternalLink className="text-zinc-600 flex-shrink-0 mt-0.5 group-hover:text-blue-400" />
           </div>
           
           {item.summary && (
-            <p className="text-xs text-zinc-400 line-clamp-2 mb-2">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-2">
               {item.summary}
             </p>
           )}
           
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5 text-[10px] text-zinc-500 uppercase tracking-wide">
-            <span className="font-medium text-zinc-400">{item.source}</span>
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-black/5 dark:border-white/5 text-[10px] text-zinc-500 uppercase tracking-wide">
+            <span className="font-medium text-zinc-500 dark:text-zinc-400">{item.source}</span>
             {item.published_date && (
               <div className="flex items-center gap-1">
                 <FiClock />
