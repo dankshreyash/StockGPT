@@ -68,24 +68,43 @@ def resolve_ticker(query: str) -> str:
             
     return quotes[0].get('symbol')
 
+import requests
+
 def get_stock(query: str) -> Dict[str, Any]:
     ticker = resolve_ticker(query)
     if not ticker:
         return None
         
     try:
-        stock = yf.Ticker(ticker)
-        info = stock.info
-        current_price = info.get('currentPrice') or info.get('regularMarketPrice')
+        session = requests.Session()
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        })
         
+        stock = yf.Ticker(ticker, session=session)
+        info = stock.info
+        
+        # Try history as a fallback if info is empty or blocked
+        current_price = info.get('currentPrice') or info.get('regularMarketPrice')
+        previous_close = info.get('regularMarketPreviousClose')
+        
+        if not current_price:
+            hist = stock.history(period="5d")
+            if not hist.empty:
+                current_price = hist['Close'].iloc[-1]
+                if len(hist) > 1:
+                    previous_close = hist['Close'].iloc[-2]
+                else:
+                    previous_close = current_price
+                    
         if not current_price:
             return None
             
-        previous_close = info.get('regularMarketPreviousClose') or current_price
+        previous_close = previous_close or current_price
         change = current_price - previous_close
         change_percent = (change / previous_close) * 100 if previous_close else 0
         
-        currency = info.get('currency', 'USD')
+        currency = info.get('currency', 'INR' if ticker.endswith('.NS') or ticker.endswith('.BO') else 'USD')
         market_cap = info.get('marketCap')
         
         return {
@@ -106,5 +125,6 @@ def get_stock(query: str) -> Dict[str, Any]:
             "website": info.get('website'),
             "summary": info.get('longBusinessSummary')
         }
-    except Exception:
+    except Exception as e:
+        print(f"Error fetching stock data for {ticker}: {e}")
         return None

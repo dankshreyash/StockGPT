@@ -58,6 +58,8 @@ def process_message(message: str) -> dict:
             # Execute requested tools
             if "stock_tool" in required_tools:
                 stock_data = TOOL_MAP["stock_tool"](ticker)
+                if not stock_data:
+                    return {"type": "error", "message": f"Could not fetch live market data for {ticker}. The data provider might be blocking cloud IPs."}
                 context_data["stock"] = stock_data
                 response_data["stockData"] = stock_data
                 
