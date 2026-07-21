@@ -123,6 +123,31 @@ def get_stock(query: str) -> Dict[str, Any]:
                     'longBusinessSummary': profile_data.get('longBusinessSummary')
                 }
                     
+        # Ultimate fallback: Google Finance Scraping
+        if not current_price:
+            import urllib.parse
+            from bs4 import BeautifulSoup
+            
+            # Map Yahoo ticker to Google Finance format
+            exchange = "NSE" if ticker.endswith(".NS") else "BOM" if ticker.endswith(".BO") else "NASDAQ"
+            symbol = ticker.split(".")[0]
+            
+            url = f"https://www.google.com/finance/quote/{urllib.parse.quote(symbol)}:{exchange}"
+            try:
+                res = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"})
+                soup = BeautifulSoup(res.text, 'html.parser')
+                
+                price_div = soup.find('div', {'class': 'YMlKec fxKbKc'})
+                if price_div:
+                    clean_price = re.sub(r'[^\d.]', '', price_div.text)
+                    current_price = float(clean_price)
+                    
+                name_div = soup.find('div', {'class': 'zzDege'})
+                if name_div:
+                    info['longName'] = name_div.text
+            except Exception as e:
+                print("Google Finance fallback failed:", e)
+
         if not current_price:
             return None
             
