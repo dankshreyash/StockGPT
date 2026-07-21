@@ -38,3 +38,19 @@ export const sendMessageToAgent = async (message) => {
     };
   }
 };
+
+export const getTrendingPrompts = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/trending-prompts`);
+    return response.data.prompts;
+  } catch (error) {
+    console.error('Failed to fetch trending prompts:', error);
+    return [
+      "HPCL",
+      "Reliance",
+      "TCS",
+      "Compare HPCL vs BPCL",
+      "Why did Infosys fall?"
+    ];
+  }
+};
