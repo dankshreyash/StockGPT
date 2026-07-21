@@ -11,7 +11,6 @@ import FinancialCard from './FinancialCard';
 import ChartCard from './ChartCard';
 import ForecastCard from './ForecastCard';
 import RiskAnalysisCard from './RiskAnalysisCard';
-import ExportMenu from './ExportMenu';
 
 const MessageBubble = ({ message }) => {
   const isUser = message.sender === 'user';
@@ -93,9 +92,6 @@ const MessageBubble = ({ message }) => {
           </div>
         )}
 
-        {!isUser && (message.stockData || message.analysisData || message.financialData || message.technicalData) && (
-          <ExportMenu targetRefId={`bubble-${message.id}`} data={message} />
-        )}
       </div>
     </motion.div>
   );

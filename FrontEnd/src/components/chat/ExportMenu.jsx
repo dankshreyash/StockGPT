@@ -27,37 +27,6 @@ const ExportMenu = ({ targetRefId, data }) => {
     }
   };
 
-  const handleExportCSV = () => {
-    // Generate CSV string from basic info
-    if (!data) return;
-    
-    let csvString = 'Metric,Value\n';
-    if (data.financialData) {
-      Object.entries(data.financialData).forEach(([k, v]) => {
-        csvString += `${k},"${v}"\n`;
-      });
-    }
-    if (data.technicalData) {
-      Object.entries(data.technicalData).forEach(([k, v]) => {
-        csvString += `${k},"${v}"\n`;
-      });
-    }
-    
-    if (csvString === 'Metric,Value\n') {
-      toast.error("No tabular data to export");
-      return;
-    }
-
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', 'StockGPT_Data.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success("CSV Downloaded successfully!");
-  };
-
   const handleCopy = () => {
     if (data.text) {
       navigator.clipboard.writeText(data.text);
@@ -70,9 +39,6 @@ const ExportMenu = ({ targetRefId, data }) => {
       <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider mr-2">Export</span>
       <button onClick={handleExportPDF} title="Download PDF" className="p-1.5 text-zinc-400 hover:text-white bg-zinc-900 rounded-md border border-zinc-800 hover:border-zinc-600 transition-all">
         <FiFileText size={12} />
-      </button>
-      <button onClick={handleExportCSV} title="Download CSV" className="p-1.5 text-zinc-400 hover:text-white bg-zinc-900 rounded-md border border-zinc-800 hover:border-zinc-600 transition-all">
-        <FiDownload size={12} />
       </button>
       <button onClick={handleCopy} title="Copy Summary" className="p-1.5 text-zinc-400 hover:text-white bg-zinc-900 rounded-md border border-zinc-800 hover:border-zinc-600 transition-all">
         <FiCopy size={12} />
