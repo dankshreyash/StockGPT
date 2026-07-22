@@ -118,6 +118,12 @@ def get_stock(query: str) -> Dict[str, Any]:
                 fast = stock.fast_info
                 current_price = fast.get('lastPrice')
                 previous_close = fast.get('previousClose')
+                
+                # Populate info dict so the frontend doesn't show N/A
+                info['marketCap'] = fast.get('marketCap')
+                info['fiftyTwoWeekHigh'] = fast.get('yearHigh')
+                info['fiftyTwoWeekLow'] = fast.get('yearLow')
+                info['currency'] = fast.get('currency')
             except Exception as e:
                 print(f"yfinance fast_info error for {ticker}: {e}")
         
