@@ -14,7 +14,10 @@ SYMBOL_MAP = {
     "INFOSYS": "INFY.NS",
     "BAJAJ FINSERV": "BAJAJFINSV.NS",
     "TATA MOTORS": "TATAMOTORS.NS",
-    "TATA STEEL": "TATASTEEL.NS"
+    "TATA STEEL": "TATASTEEL.NS",
+    "SBI": "SBIN.NS",
+    "HDFC": "HDFCBANK.NS",
+    "ITC": "ITC.NS"
 }
 
 def format_market_cap(market_cap: float, currency: str = 'INR') -> str:
@@ -54,19 +57,37 @@ def resolve_ticker(query: str) -> str:
     if not quotes:
         return ""
     
+    # Check for exact symbol match first
+    upper_query = query.upper().strip()
     for q in quotes:
+        if q.get('symbol', '').upper() == upper_query:
+            return q.get('symbol')
+            
+    # Filter out ETFs and Mutual Funds unless explicitly requested
+    is_etf_query = "ETF" in upper_query
+    def is_valid_equity(q):
+        name = (q.get('longname', '') + ' ' + q.get('shortname', '')).upper()
+        if not is_etf_query and ('ETF' in name or 'MUTUAL FUND' in name or 'FUND' in name):
+            return False
+        return True
+        
+    filtered_quotes = [q for q in quotes if is_valid_equity(q)]
+    if not filtered_quotes:
+        filtered_quotes = quotes
+    
+    for q in filtered_quotes:
         if q.get('quoteType') == 'EQUITY' and q.get('exchange') == 'NSI':
             return q.get('symbol')
             
-    for q in quotes:
+    for q in filtered_quotes:
         if q.get('quoteType') == 'EQUITY' and q.get('exchange') == 'BSE':
             return q.get('symbol')
             
-    for q in quotes:
+    for q in filtered_quotes:
         if q.get('quoteType') == 'EQUITY':
             return q.get('symbol')
             
-    return quotes[0].get('symbol')
+    return filtered_quotes[0].get('symbol')
 
 import requests
 from yahooquery import Ticker as YQTicker
@@ -83,45 +104,63 @@ def get_stock(query: str) -> Dict[str, Any]:
         })
         
         stock = yf.Ticker(ticker, session=session)
-        info = stock.info
-        
-        # Try history as a fallback if info is empty or blocked
+        info = {}
+        try:
+            info = stock.info
+        except Exception as e:
+            print(f"yfinance info error for {ticker}: {e}")
+            
         current_price = info.get('currentPrice') or info.get('regularMarketPrice')
         previous_close = info.get('regularMarketPreviousClose')
         
         if not current_price:
-            hist = stock.history(period="5d")
-            if not hist.empty:
-                current_price = float(hist['Close'].iloc[-1])
-                if len(hist) > 1:
-                    previous_close = float(hist['Close'].iloc[-2])
-                else:
-                    previous_close = current_price
+            try:
+                fast = stock.fast_info
+                current_price = fast.get('lastPrice')
+                previous_close = fast.get('previousClose')
+            except Exception as e:
+                print(f"yfinance fast_info error for {ticker}: {e}")
+        
+        # Try history as a fallback if info is empty or blocked
+        if not current_price:
+            try:
+                hist = stock.history(period="5d")
+                if not hist.empty:
+                    current_price = float(hist['Close'].iloc[-1])
+                    if len(hist) > 1:
+                        previous_close = float(hist['Close'].iloc[-2])
+                    else:
+                        previous_close = current_price
+            except Exception as e:
+                print(f"yfinance history error for {ticker}: {e}")
                     
         # If yfinance completely failed, fallback to yahooquery
         if not current_price:
-            yq_ticker = YQTicker(ticker)
-            price_data = yq_ticker.price.get(ticker, {})
-            summary_data = yq_ticker.summary_detail.get(ticker, {})
-            profile_data = yq_ticker.asset_profile.get(ticker, {})
-            
-            if isinstance(price_data, dict) and price_data.get('regularMarketPrice'):
-                current_price = price_data.get('regularMarketPrice')
-                previous_close = price_data.get('regularMarketPreviousClose') or current_price
+            try:
+                yq_ticker = YQTicker(ticker)
+                price_data = yq_ticker.price.get(ticker, {})
+                summary_data = yq_ticker.summary_detail.get(ticker, {})
+                profile_data = yq_ticker.asset_profile.get(ticker, {})
                 
-                info = {
-                    'currency': price_data.get('currency', 'USD'),
-                    'marketCap': price_data.get('marketCap') or summary_data.get('marketCap'),
-                    'longName': price_data.get('longName'),
-                    'shortName': price_data.get('shortName'),
-                    'trailingPE': summary_data.get('trailingPE') or summary_data.get('forwardPE'),
-                    'fiftyTwoWeekHigh': summary_data.get('fiftyTwoWeekHigh'),
-                    'fiftyTwoWeekLow': summary_data.get('fiftyTwoWeekLow'),
-                    'sector': profile_data.get('sector'),
-                    'industry': profile_data.get('industry'),
-                    'website': profile_data.get('website'),
-                    'longBusinessSummary': profile_data.get('longBusinessSummary')
-                }
+                if isinstance(price_data, dict) and price_data.get('regularMarketPrice'):
+                    current_price = price_data.get('regularMarketPrice')
+                    previous_close = price_data.get('regularMarketPreviousClose') or current_price
+                    
+                    info = {
+                        'currency': price_data.get('currency', 'USD'),
+                        'marketCap': price_data.get('marketCap') or summary_data.get('marketCap'),
+                        'longName': price_data.get('longName'),
+                        'shortName': price_data.get('shortName'),
+                        'trailingPE': summary_data.get('trailingPE') or summary_data.get('forwardPE'),
+                        'fiftyTwoWeekHigh': summary_data.get('fiftyTwoWeekHigh'),
+                        'fiftyTwoWeekLow': summary_data.get('fiftyTwoWeekLow'),
+                        'sector': profile_data.get('sector'),
+                        'industry': profile_data.get('industry'),
+                        'website': profile_data.get('website'),
+                        'longBusinessSummary': profile_data.get('longBusinessSummary')
+                    }
+            except Exception as e:
+                print(f"yahooquery error for {ticker}: {e}")
                     
         # Ultimate fallback: Google Finance Scraping
         if not current_price:
@@ -137,7 +176,7 @@ def get_stock(query: str) -> Dict[str, Any]:
                 res = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"})
                 soup = BeautifulSoup(res.text, 'html.parser')
                 
-                price_div = soup.find('div', {'class': 'YMlKec fxKbKc'})
+                price_div = soup.find('div', {'class': 'YMlKec fxKbKc'}) or soup.find('div', {'class': 'N6SYTe'})
                 if price_div:
                     clean_price = re.sub(r'[^\d.]', '', price_div.text)
                     current_price = float(clean_price)

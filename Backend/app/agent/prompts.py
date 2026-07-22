@@ -25,7 +25,7 @@ Always include 'stock_tool' if any specific company is mentioned so we can resol
 Return ONLY a valid JSON object in this exact format:
 {
     "intent": "analysis",
-    "companies": ["Company1", "Company2"],
+    "companies": ["RELIANCE.NS", "AAPL"], // MUST use exact Yahoo Finance ticker symbols (Append .NS for Indian stocks!)
     "required_tools": ["stock_tool", "technical_tool", "analysis_tool"]
 }
 """
