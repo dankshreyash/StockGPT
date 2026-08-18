@@ -53,6 +53,10 @@ def search_company(query: str) -> list:
         return []
 
 def resolve_ticker(query: str) -> str:
+    upper_query = query.upper().strip()
+    if upper_query.endswith('.NS') or upper_query.endswith('.BO'):
+        return upper_query
+
     quotes = search_company(query)
     if not quotes:
         return ""

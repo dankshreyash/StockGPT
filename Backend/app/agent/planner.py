@@ -4,7 +4,7 @@ from app.config import settings
 from app.agent.prompts import PLANNER_PROMPT
 
 client = Groq(api_key=settings.GROQ_API_KEY)
-MODEL = "openai/gpt-oss-20b"
+MODEL = "qwen/qwen3.6-27b"
 
 def determine_plan(message: str) -> dict:
     try:

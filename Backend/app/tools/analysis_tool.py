@@ -3,7 +3,7 @@ from groq import Groq
 from app.config import settings
 
 client = Groq(api_key=settings.GROQ_API_KEY)
-MODEL = "openai/gpt-oss-20b"
+MODEL = "qwen/qwen3.6-27b"
 
 def generate_ai_analysis(context_data: dict, user_question: str) -> dict:
     prompt = f"""You are an expert AI Stock Research Agent.

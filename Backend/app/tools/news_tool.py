@@ -5,7 +5,7 @@ from groq import Groq
 from app.config import settings
 
 client = Groq(api_key=settings.GROQ_API_KEY)
-MODEL = "openai/gpt-oss-20b"
+MODEL = "qwen/qwen3.6-27b"
 
 def analyze_sentiment(news_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     if not news_items:
