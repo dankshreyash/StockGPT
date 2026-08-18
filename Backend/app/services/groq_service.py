@@ -4,7 +4,7 @@ from app.config import settings
 
 client = Groq(api_key=settings.GROQ_API_KEY)
 
-MODEL = "llama-3.1-8b-instant" # Or llama-3.3-70b-versatile
+MODEL = "openai/gpt-oss-20b" # Or llama-3.3-70b-versatile
 
 def determine_intent(message: str) -> dict:
     prompt = f"""You are an intent classifier for a stock market AI agent.
