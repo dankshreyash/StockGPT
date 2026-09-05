@@ -49,7 +49,7 @@ Provide your analysis in the following structured JSON format:
         content = chat_completion.choices[0].message.content
         return json.loads(content)
     except Exception as e:
-        print(f"Groq Analysis Error: {e}")
+        print(f"Groq Analysis Error: {type(e).__name__}: {e}")
         return {"error": "Failed to generate analysis"}
 
 def generate_general_answer(context_data: dict, user_question: str) -> str:
@@ -72,5 +72,5 @@ User Question: {user_question}
         )
         return chat_completion.choices[0].message.content
     except Exception as e:
-        print(f"Groq General Error: {e}")
+        print(f"Groq General Error: {type(e).__name__}: {e}")
         return "Failed to generate answer."

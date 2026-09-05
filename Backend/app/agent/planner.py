@@ -20,7 +20,7 @@ def determine_plan(message: str) -> dict:
         content = chat_completion.choices[0].message.content
         return json.loads(content)
     except Exception as e:
-        print(f"Groq Planner Error: {e}")
+        print(f"Groq Planner Error: {type(e).__name__}: {e}")
         return {
             "intent": "unknown", 
             "companies": [], 

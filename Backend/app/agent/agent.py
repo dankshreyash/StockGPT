@@ -2,8 +2,12 @@ from app.agent.planner import determine_plan
 from app.agent.router import TOOL_MAP
 from app.tools.stock_tool import resolve_ticker
 from app.tools.analysis_tool import generate_general_answer
+from app.config import settings
 
 def process_message(message: str) -> dict:
+    if not settings.GROQ_API_KEY:
+        return {"type": "error", "message": "AI service is not configured. Please set the GROQ_API_KEY environment variable."}
+    
     plan = determine_plan(message)
     intent = plan.get("intent", "unknown")
     companies = plan.get("companies", [])
@@ -37,6 +41,9 @@ def process_message(message: str) -> dict:
                 return {"type": "error", "message": "Failed to fetch stock data for comparison."}
                 
             comparison_result = TOOL_MAP["comparison_tool"](stock_a, stock_b, message)
+            
+            if "error" in comparison_result:
+                return {"type": "error", "message": comparison_result["error"]}
             
             return {
                 "type": "comparison",
@@ -101,5 +108,5 @@ def process_message(message: str) -> dict:
             return response_data
             
     except Exception as e:
-        print(f"Agent Execution Error: {e}")
+        print(f"Agent Execution Error: {type(e).__name__}: {e}")
         return {"type": "error", "message": "An error occurred while executing the tools."}

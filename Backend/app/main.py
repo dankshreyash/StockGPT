@@ -19,3 +19,11 @@ app.include_router(chat_router)
 @app.get("/")
 def read_root():
     return {"message": f"Welcome to {settings.APP_NAME}"}
+
+@app.get("/health")
+def health_check():
+    groq_configured = bool(settings.GROQ_API_KEY)
+    return {
+        "status": "healthy" if groq_configured else "degraded",
+        "groq_api_key_configured": groq_configured,
+    }

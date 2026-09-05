@@ -41,5 +41,5 @@ Ensure the "winner" field contains the exact string name of the winning stock, o
         content = chat_completion.choices[0].message.content
         return json.loads(content)
     except Exception as e:
-        print(f"Groq Comparison Error: {e}")
+        print(f"Groq Comparison Error: {type(e).__name__}: {e}")
         return {"error": "Failed to generate comparison."}

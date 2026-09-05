@@ -28,11 +28,12 @@ export const sendMessageToAgent = async (message) => {
     };
   } catch (error) {
     console.error('API Error:', error);
+    const message = error.response?.data?.message || 'Sorry, I encountered an error communicating with the server.';
     return {
       id: generateId(),
       sender: 'agent',
       type: 'error',
-      text: 'Sorry, I encountered an error communicating with the server.',
+      text: message,
       stockData: null,
       timestamp: new Date().toISOString(),
     };

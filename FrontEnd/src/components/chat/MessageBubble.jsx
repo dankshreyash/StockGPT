@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { FiAlertCircle } from 'react-icons/fi';
 import StockCard from './StockCard';
 import AnalysisCard from './AnalysisCard';
 import PeerComparisonCard from './PeerComparisonCard';
@@ -27,11 +28,19 @@ const MessageBubble = ({ message }) => {
         className={`max-w-[85%] rounded-2xl px-4 py-3 ${
           isUser
             ? 'bg-green-600 text-white rounded-tr-sm'
-            : 'bg-gray-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-tl-sm border border-gray-300 dark:border-zinc-700/50 shadow-sm'
+            : message.type === 'error'
+              ? 'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-300 rounded-tl-sm border border-red-200 dark:border-red-800/50 shadow-sm'
+              : 'bg-gray-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-tl-sm border border-gray-300 dark:border-zinc-700/50 shadow-sm'
         }`}
       >
         {message.text && (
           <div className="prose dark:prose-invert max-w-none text-sm prose-p:leading-relaxed prose-pre:bg-gray-100 dark:prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-zinc-800">
+            {message.type === 'error' && (
+              <div className="flex items-center gap-1.5 mb-1 text-red-500 dark:text-red-400">
+                <FiAlertCircle className="w-4 h-4" />
+                <span className="text-xs font-medium uppercase tracking-wide">Error</span>
+              </div>
+            )}
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {message.text}
             </ReactMarkdown>
