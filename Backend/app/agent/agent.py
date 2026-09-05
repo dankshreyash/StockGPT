@@ -1,4 +1,4 @@
-from app.agent.planner import determine_plan
+from app.agent.planner import determine_plan, PlannerError
 from app.agent.router import TOOL_MAP
 from app.tools.stock_tool import resolve_ticker
 from app.tools.analysis_tool import generate_general_answer
@@ -7,12 +7,17 @@ from app.config import settings
 def process_message(message: str, history: list = None) -> dict:
     if not settings.GROQ_API_KEY:
         return {"type": "error", "message": "AI service is not configured. Please set the GROQ_API_KEY environment variable."}
-    
-    plan = determine_plan(message, history)
+
+    try:
+        plan = determine_plan(message, history)
+    except PlannerError as e:
+        print(f"Planner failed: {e}")
+        return {"type": "error", "message": "The AI service is temporarily unavailable. Please try again in a moment."}
+
     intent = plan.get("intent", "unknown")
     companies = plan.get("companies", [])
     required_tools = plan.get("required_tools", [])
-    
+
     print(f"--- Agent Plan ---")
     print(f"Intent: {intent}")
     print(f"Companies: {companies}")
