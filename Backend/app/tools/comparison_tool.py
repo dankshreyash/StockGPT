@@ -51,21 +51,44 @@ Ensure the "winner" field contains the exact string name of the winning stock, o
 
     company_a = stock_a.get('company', 'Stock A')
     company_b = stock_b.get('company', 'Stock B')
-    price_a = stock_a.get('price', 'N/A')
-    price_b = stock_b.get('price', 'N/A')
+    sym_a = stock_a.get('symbol', 'A')
+    sym_b = stock_b.get('symbol', 'B')
+    price_a = stock_a.get('price', 0)
+    price_b = stock_b.get('price', 0)
     change_a = stock_a.get('change_percent', 0)
     change_b = stock_b.get('change_percent', 0)
-    pe_a = stock_a.get('pe', 'N/A')
-    pe_b = stock_b.get('pe', 'N/A')
+    pe_a = stock_a.get('pe')
+    pe_b = stock_b.get('pe')
     mcap_a = stock_a.get('market_cap_display', 'N/A')
     mcap_b = stock_b.get('market_cap_display', 'N/A')
+    high52_a = stock_a.get('high52')
+    high52_b = stock_b.get('high52')
+    low52_a = stock_a.get('low52')
+    low52_b = stock_b.get('low52')
+    sector_a = stock_a.get('sector', 'N/A')
+    sector_b = stock_b.get('sector', 'N/A')
+    cur = stock_a.get('currency', '₹')
+    sym = '₹' if cur == 'INR' else '$'
+
+    def winner(va, vb):
+        try:
+            if float(va or 0) > float(vb or 0):
+                return sym_a
+            elif float(vb or 0) > float(va or 0):
+                return sym_b
+        except (TypeError, ValueError):
+            pass
+        return "Tie"
 
     return {
-        "text_summary": f"**{company_a}** is trading at {price_a} ({change_a:+.2f}%), P/E: {pe_a}, Market Cap: {mcap_a}.\n\n**{company_b}** is trading at {price_b} ({change_b:+.2f}%), P/E: {pe_b}, Market Cap: {mcap_b}.\n\nThe AI comparison service is temporarily unavailable, but here is the raw data side by side.",
+        "text_summary": f"**{company_a}** vs **{company_b}** — here is a side-by-side comparison of key metrics.",
         "comparison_table": [
-            {"metric": "Price", "stock_a_value": str(price_a), "stock_b_value": str(price_b), "winner": company_a if change_a > change_b else company_b if change_b > change_a else "Tie"},
-            {"metric": "Change %", "stock_a_value": f"{change_a:+.2f}%", "stock_b_value": f"{change_b:+.2f}%", "winner": company_a if change_a > change_b else company_b if change_b > change_a else "Tie"},
-            {"metric": "P/E Ratio", "stock_a_value": str(pe_a), "stock_b_value": str(pe_b), "winner": "Tie"},
-            {"metric": "Market Cap", "stock_a_value": str(mcap_a), "stock_b_value": str(mcap_b), "winner": "Tie"},
+            {"metric": "Price", "stock_a_value": f"{sym}{price_a:,.2f}" if price_a else "N/A", "stock_b_value": f"{sym}{price_b:,.2f}" if price_b else "N/A", "winner": winner(price_a, price_b)},
+            {"metric": "Change %", "stock_a_value": f"{change_a:+.2f}%", "stock_b_value": f"{change_b:+.2f}%", "winner": winner(change_a, change_b)},
+            {"metric": "P/E Ratio", "stock_a_value": f"{pe_a:.2f}" if pe_a else "N/A", "stock_b_value": f"{pe_b:.2f}" if pe_b else "N/A", "winner": winner(pe_b, pe_a)},
+            {"metric": "Market Cap", "stock_a_value": mcap_a, "stock_b_value": mcap_b, "winner": winner(stock_a.get('market_cap', 0), stock_b.get('market_cap', 0))},
+            {"metric": "52W High", "stock_a_value": f"{sym}{high52_a:,.2f}" if high52_a else "N/A", "stock_b_value": f"{sym}{high52_b:,.2f}" if high52_b else "N/A", "winner": winner(high52_a, high52_b)},
+            {"metric": "52W Low", "stock_a_value": f"{sym}{low52_a:,.2f}" if low52_a else "N/A", "stock_b_value": f"{sym}{low52_b:,.2f}" if low52_b else "N/A", "winner": "Tie"},
+            {"metric": "Sector", "stock_a_value": sector_a, "stock_b_value": sector_b, "winner": "Tie"},
         ]
     }
