@@ -1,4 +1,5 @@
 import json
+import time
 from groq import Groq
 from app.config import settings
 
@@ -36,21 +37,24 @@ Provide your analysis in the following structured JSON format:
     ]
 }}
 """
-    try:
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a JSON-only API that outputs valid JSON without any markdown formatting or extra text."},
-                {"role": "user", "content": prompt}
-            ],
-            model=MODEL,
-            response_format={"type": "json_object"},
-            temperature=0.3,
-        )
-        content = chat_completion.choices[0].message.content
-        return json.loads(content)
-    except Exception as e:
-        print(f"Groq Analysis Error: {type(e).__name__}: {e}")
-        return {"error": "Failed to generate analysis"}
+    for attempt in range(3):
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": "You are a JSON-only API that outputs valid JSON without any markdown formatting or extra text."},
+                    {"role": "user", "content": prompt}
+                ],
+                model=MODEL,
+                response_format={"type": "json_object"},
+                temperature=0.3,
+            )
+            content = chat_completion.choices[0].message.content
+            return json.loads(content)
+        except Exception as e:
+            print(f"Groq Analysis Error (attempt {attempt + 1}/3): {type(e).__name__}: {e}")
+            if attempt < 2:
+                time.sleep(1 * (attempt + 1))
+    return {"error": "Failed to generate analysis. The AI service may be temporarily unavailable."}
 
 def generate_general_answer(context_data: dict, user_question: str) -> str:
     prompt = f"""You are an expert AI Stock Research Agent.
@@ -61,16 +65,19 @@ Context Data:
 
 User Question: {user_question}
 """
-    try:
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a helpful financial assistant."},
-                {"role": "user", "content": prompt}
-            ],
-            model=MODEL,
-            temperature=0.3,
-        )
-        return chat_completion.choices[0].message.content
-    except Exception as e:
-        print(f"Groq General Error: {type(e).__name__}: {e}")
-        return "Failed to generate answer."
+    for attempt in range(3):
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": "You are a helpful financial assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+                model=MODEL,
+                temperature=0.3,
+            )
+            return chat_completion.choices[0].message.content
+        except Exception as e:
+            print(f"Groq General Error (attempt {attempt + 1}/3): {type(e).__name__}: {e}")
+            if attempt < 2:
+                time.sleep(1 * (attempt + 1))
+    return "The AI service is temporarily unavailable. Please try again in a moment."
