@@ -2,6 +2,7 @@ import yfinance as yf
 from yahooquery import search
 from typing import Dict, Any
 import re
+from app.config import settings
 
 SYMBOL_MAP = {
     "HPCL": "HINDPETRO.NS",
@@ -49,7 +50,27 @@ def search_company(query: str) -> list:
                 search_results = search(clean_query)
                 quotes = search_results.get("quotes", [])
         return quotes
-    except Exception:
+    except Exception as e:
+        print(f"yahooquery search error for {query}: {e}")
+        # Fallback: Alpha Vantage symbol search
+        if settings.ALPHA_VANTAGE_API_KEY:
+            try:
+                import requests
+                url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={query}&apikey={settings.ALPHA_VANTAGE_API_KEY}"
+                res = requests.get(url, timeout=10)
+                matches = res.json().get("bestMatches", [])
+                return [
+                    {
+                        "symbol": m["1. symbol"],
+                        "longname": m.get("2. name", ""),
+                        "shortname": m.get("2. name", ""),
+                        "quoteType": "EQUITY",
+                        "exchange": "NSI" if "NSI" in m.get("4. region", "") else "BSE",
+                    }
+                    for m in matches[:5]
+                ]
+            except Exception as e2:
+                print(f"Alpha Vantage search error for {query}: {e2}")
         return []
 
 def resolve_ticker(query: str) -> str:
@@ -143,6 +164,27 @@ def get_stock(query: str) -> Dict[str, Any]:
                         previous_close = current_price
             except Exception as e:
                 print(f"yfinance history error for {ticker}: {e}")
+                    
+        # If yfinance completely failed, try Alpha Vantage (works from cloud)
+        if not current_price and settings.ALPHA_VANTAGE_API_KEY:
+            try:
+                symbol = ticker.split(".")[0]
+                exchange_suffix = "NSE" if ticker.endswith(".NS") else "BSE" if ticker.endswith(".BO") else ""
+                av_symbol = f"{symbol}.{exchange_suffix}" if exchange_suffix else symbol
+                
+                url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={av_symbol}&apikey={settings.ALPHA_VANTAGE_API_KEY}"
+                res = requests.get(url, timeout=10)
+                data = res.json().get("Global Quote", {})
+                
+                if data.get("05. price"):
+                    current_price = float(data["05. price"])
+                    previous_close = float(data.get("08. previous close", current_price))
+                    info = {
+                        "longName": info.get("longName") or ticker,
+                        "currency": info.get("currency", "INR" if ticker.endswith(".NS") or ticker.endswith(".BO") else "USD"),
+                    }
+            except Exception as e:
+                print(f"Alpha Vantage error for {ticker}: {e}")
                     
         # If yfinance completely failed, fallback to yahooquery
         if not current_price:

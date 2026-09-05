@@ -23,7 +23,9 @@ def read_root():
 @app.get("/health")
 def health_check():
     groq_configured = bool(settings.GROQ_API_KEY)
+    av_configured = bool(settings.ALPHA_VANTAGE_API_KEY)
     return {
         "status": "healthy" if groq_configured else "degraded",
         "groq_api_key_configured": groq_configured,
+        "alpha_vantage_api_key_configured": av_configured,
     }
