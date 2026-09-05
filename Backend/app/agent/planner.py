@@ -12,6 +12,19 @@ MODEL = "qwen/qwen3.6-27b"
 
 _PRONOUNS = {"it", "its", "this", "that", "which", "them", "those"}
 
+_FOLLOW_UP_PATTERNS = [
+    "should i buy", "should i sell", "should i hold",
+    "buy it", "sell it", "hold it",
+    "which one", "what about", "how about",
+    "is it good", "is it bad", "is it worth",
+    "tell me more", "more about", "analyze",
+    "pros and cons", "bullish or bearish",
+    "price target", "forecast", "prediction",
+    "good investment", "bad investment",
+    "overvalued", "undervalued",
+    "buy now", "good time to buy",
+]
+
 def _extract_companies_from_text(text: str) -> list:
     companies = []
     tagged = re.findall(r'\[stock:([A-Z0-9.]+)\]', text)
@@ -41,9 +54,11 @@ def _local_plan(message: str, history: list = None) -> dict:
     lower = message.lower()
     companies = _extract_companies_from_text(message)
 
-    has_pronoun = any(p in lower.split() for p in _PRONOUNS) or "which one" in lower or "buy it" in lower
+    has_pronoun = any(p in lower.split() for p in _PRONOUNS)
+    has_follow_up = any(pat in lower for pat in _FOLLOW_UP_PATTERNS)
+    is_contextual = has_pronoun or has_follow_up
 
-    if not companies and has_pronoun and history:
+    if not companies and is_contextual and history:
         for h in reversed(history):
             hist_companies = _extract_companies_from_text(h.get("content", ""))
             if hist_companies:

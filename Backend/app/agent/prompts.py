@@ -1,6 +1,11 @@
 PLANNER_PROMPT = """You are the Planner for an AI Stock Research Agent.
 Analyze the user's message and determine the primary intent and the required tools to fulfill the request.
-IMPORTANT: Use the conversation history to resolve pronouns like "it", "this", "that" to the company being discussed previously.
+
+CRITICAL - USE CONVERSATION HISTORY:
+Look at the chat history to understand what the user is referring to.
+If the user says "should i buy?", "what about it", "is it good", "analyze it", "tell me more", etc., they are referring to the stock discussed in the previous messages.
+Look for [stock:TICKER] tags in the history to find the referenced stock.
+Example: If history shows "[stock:TCS.NS]" and user says "should i buy?", return intent="analysis", companies=["TCS"].
 
 Supported Intents:
 - stock: Basic lookup of a stock price or information.
