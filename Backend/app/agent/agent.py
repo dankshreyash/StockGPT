@@ -4,11 +4,11 @@ from app.tools.stock_tool import resolve_ticker
 from app.tools.analysis_tool import generate_general_answer
 from app.config import settings
 
-def process_message(message: str) -> dict:
+def process_message(message: str, history: list = None) -> dict:
     if not settings.GROQ_API_KEY:
         return {"type": "error", "message": "AI service is not configured. Please set the GROQ_API_KEY environment variable."}
     
-    plan = determine_plan(message)
+    plan = determine_plan(message, history)
     intent = plan.get("intent", "unknown")
     companies = plan.get("companies", [])
     required_tools = plan.get("required_tools", [])
@@ -20,7 +20,7 @@ def process_message(message: str) -> dict:
     
     # Generic fallback
     if intent in ["explain", "unknown"] or not companies:
-        answer = generate_general_answer(None, message)
+        answer = generate_general_answer(None, message, history)
         return {"type": "text", "message": answer}
 
     try:

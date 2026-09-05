@@ -1,5 +1,6 @@
 PLANNER_PROMPT = """You are the Planner for an AI Stock Research Agent.
 Analyze the user's message and determine the primary intent and the required tools to fulfill the request.
+IMPORTANT: Use the conversation history to resolve pronouns like "it", "this", "that" to the company being discussed previously.
 
 Supported Intents:
 - stock: Basic lookup of a stock price or information.

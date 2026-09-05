@@ -31,7 +31,7 @@ export const useChat = () => {
 
     try {
       // Get agent response
-      const agentResponse = await sendMessageToAgent(text);
+      const agentResponse = await sendMessageToAgent(text, messages);
       setMessages((prev) => [...prev, agentResponse]);
     } catch (err) {
       setError('Failed to get a response. Please try again.');

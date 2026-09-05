@@ -3,10 +3,14 @@ import { generateId } from '../utils/helpers';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-export const sendMessageToAgent = async (message) => {
+export const sendMessageToAgent = async (message, history = []) => {
   try {
     const response = await axios.post(`${API_URL}/chat`, {
-      message: message
+      message: message,
+      history: history.slice(-6).map(m => ({
+        role: m.sender === 'user' ? 'user' : 'assistant',
+        content: m.text || ''
+      }))
     });
     
     const data = response.data;

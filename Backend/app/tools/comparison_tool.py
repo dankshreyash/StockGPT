@@ -2,6 +2,7 @@ import json
 import time
 from groq import Groq
 from app.config import settings
+from app.utils.helpers import strip_thinking_tags
 
 client = Groq(api_key=settings.GROQ_API_KEY)
 MODEL = "qwen/qwen3.6-27b"
@@ -41,6 +42,7 @@ Ensure the "winner" field contains the exact string name of the winning stock, o
                 temperature=0.2,
             )
             content = chat_completion.choices[0].message.content
+            content = strip_thinking_tags(content)
             return json.loads(content)
         except Exception as e:
             print(f"Groq Comparison Error (attempt {attempt + 1}/3): {type(e).__name__}: {e}")

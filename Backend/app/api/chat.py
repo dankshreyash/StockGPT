@@ -61,4 +61,5 @@ async def get_trending_prompts():
 @router.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     message = request.message.strip()
-    return process_message(message)
+    history = [{"role": m.role, "content": m.content} for m in (request.history or [])]
+    return process_message(message, history)
