@@ -169,10 +169,7 @@ def get_stock(query: str) -> Dict[str, Any]:
         if not current_price and settings.ALPHA_VANTAGE_API_KEY:
             try:
                 symbol = ticker.split(".")[0]
-                exchange_suffix = "NSE" if ticker.endswith(".NS") else "BSE" if ticker.endswith(".BO") else ""
-                av_symbol = f"{symbol}.{exchange_suffix}" if exchange_suffix else symbol
-                
-                url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={av_symbol}&apikey={settings.ALPHA_VANTAGE_API_KEY}"
+                url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={settings.ALPHA_VANTAGE_API_KEY}"
                 res = requests.get(url, timeout=10)
                 data = res.json().get("Global Quote", {})
                 
@@ -180,9 +177,11 @@ def get_stock(query: str) -> Dict[str, Any]:
                     current_price = float(data["05. price"])
                     previous_close = float(data.get("08. previous close", current_price))
                     info = {
-                        "longName": info.get("longName") or ticker,
+                        "longName": info.get("longName") or data.get("10. name", ticker),
                         "currency": info.get("currency", "INR" if ticker.endswith(".NS") or ticker.endswith(".BO") else "USD"),
                     }
+                else:
+                    print(f"Alpha Vantage no data for {symbol}: {res.json()}")
             except Exception as e:
                 print(f"Alpha Vantage error for {ticker}: {e}")
                     
@@ -240,6 +239,8 @@ def get_stock(query: str) -> Dict[str, Any]:
                 print("Google Finance fallback failed:", e)
 
         if not current_price:
+            av_status = "configured" if settings.ALPHA_VANTAGE_API_KEY else "NOT configured"
+            print(f"All data sources failed for {ticker}. Alpha Vantage: {av_status}")
             return None
             
         previous_close = previous_close or current_price
