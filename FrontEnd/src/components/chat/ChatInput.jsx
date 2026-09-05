@@ -22,8 +22,9 @@ const ChatInput = ({ onSendMessage, onSuggest, isTyping }) => {
 
   return (
     <div className="flex flex-col bg-gray-50 dark:bg-zinc-950/80 backdrop-blur-md border-t border-black/10 dark:border-white/10 shrink-0">
-      <SuggestedPrompts onSelect={onSuggest} />
-      <form onSubmit={handleSubmit} className="p-4 pt-0">
+      <div className="max-w-4xl mx-auto w-full">
+        <SuggestedPrompts onSelect={onSuggest} />
+        <form onSubmit={handleSubmit} className="p-4 pt-0">
         <div className="relative flex items-center">
           <input
             type="text"
@@ -43,6 +44,7 @@ const ChatInput = ({ onSendMessage, onSuggest, isTyping }) => {
           </button>
         </div>
       </form>
+      </div>
     </div>
   );
 };
