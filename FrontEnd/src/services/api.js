@@ -7,10 +7,18 @@ export const sendMessageToAgent = async (message, history = []) => {
   try {
     const response = await axios.post(`${API_URL}/chat`, {
       message: message,
-      history: history.slice(-6).map(m => ({
-        role: m.sender === 'user' ? 'user' : 'assistant',
-        content: m.text || ''
-      }))
+      history: history.slice(-6).map(m => {
+        let content = m.text || '';
+        if (m.stockData?.symbol) content += ` [stock:${m.stockData.symbol}]`;
+        if (m.comparisonData?.comparison_table) {
+          m.comparisonData.comparison_table.forEach(() => {});
+        }
+        if (m.comparisonData?.text_summary) content += ` ${m.comparisonData.text_summary}`;
+        return {
+          role: m.sender === 'user' ? 'user' : 'assistant',
+          content: content
+        };
+      })
     });
     
     const data = response.data;
